@@ -26,11 +26,15 @@ export const EXPECTED_RESULTS = [
 
 export const EXPECTED_MAX_SPEEDUP = 6.6667;
 
-/** Chart colours */
+/** Chart colours — tuned for light academic theme */
 export const CHART_COLORS = {
-  speedup:    "#3b82f6", // blue-500
-  efficiency: "#22c55e", // green-500
-  maxLine:    "#f97316", // orange-500
-  grid:       "#334155", // slate-700
-  axis:       "#94a3b8", // slate-400
+  speedup:       "#2563eb", // blue-600   — primary Amdahl speedup line
+  idealSpeedup:  "#94a3b8", // slate-400  — ideal linear speedup (lighter)
+  scenario85:    "#2563eb", // blue-600   — P = 0.85 (project default)
+  scenario90:    "#059669", // emerald-600 — P = 0.90
+  scenario95:    "#d97706", // amber-600  — P = 0.95
+  maxLine:       "#dc2626", // red-600    — max theoretical speedup reference
+  grid:          "#e5e7eb", // gray-200   — subtle grid lines
+  axis:          "#6b7280", // gray-500   — axis labels
+  tooltip:       "#1e2330", // charcoal   — tooltip text
 } as const;

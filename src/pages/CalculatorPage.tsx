@@ -2,6 +2,9 @@
 // pages/CalculatorPage.tsx
 // Phase 2: Fully functional Amdahl's Law Speedup Calculator.
 //
+// Phase 3 addition: accepts sharedP / onSharedPChange props so the parallel
+// fraction is synchronised with GraphsPage via App-level state.
+//
 // All arithmetic is delegated to src/calculations/amdahl.ts — this file
 // contains only UI logic and rendering.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -35,8 +38,16 @@ function clampP(raw: number): number {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function CalculatorPage() {
-  const [P, setP] = useState<number>(DEFAULT_P);
+interface CalculatorPageProps {
+  /** Parallel fraction shared with GraphsPage via App-level state */
+  sharedP?: number;
+  onSharedPChange?: (p: number) => void;
+}
+
+export default function CalculatorPage({ sharedP, onSharedPChange }: CalculatorPageProps = {}) {
+  // Use shared P from App if provided, otherwise keep internal state.
+  const [internalP, setInternalP] = useState<number>(DEFAULT_P);
+  const P = sharedP !== undefined ? sharedP : internalP;
   const [N, setN] = useState<number>(DEFAULT_N);
 
   // Derived values — computed from the calculation module, never hardcoded
@@ -49,11 +60,14 @@ export default function CalculatorPage() {
   const summaryRows     = buildResultsTable(P, SUMMARY_CORES);
 
   function handlePSlider(e: React.ChangeEvent<HTMLInputElement>) {
-    setP(clampP(parseFloat(e.target.value)));
+    const newP = clampP(parseFloat(e.target.value));
+    setInternalP(newP);
+    onSharedPChange?.(newP);
   }
 
   function handleReset() {
-    setP(DEFAULT_P);
+    setInternalP(DEFAULT_P);
+    onSharedPChange?.(DEFAULT_P);
     setN(DEFAULT_N);
   }
 

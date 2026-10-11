@@ -1,6 +1,9 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // App.tsx
 // Root component — simple state-based router with 5 navigation sections.
+//
+// Phase 3: parallelFraction is lifted to App so the Calculator and Graphs pages
+// share the same P value without introducing a heavy state library.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { useState } from "react";
@@ -13,8 +16,13 @@ import AboutPage      from "./pages/AboutPage";
 
 type PageId = "overview" | "calculator" | "graphs" | "comparison" | "about";
 
+/** Default parallel fraction — matches the project scenario (P = 0.85) */
+const DEFAULT_P = 0.85;
+
 export default function App() {
   const [activePage, setActivePage] = useState<PageId>("overview");
+  // Shared parallel fraction: controlled here, passed to Calculator and Graphs.
+  const [parallelFraction, setParallelFraction] = useState<number>(DEFAULT_P);
 
   const handleNavigate = (page: string) => {
     setActivePage(page as PageId);
@@ -27,8 +35,18 @@ export default function App() {
 
       <main>
         {activePage === "overview"    && <OverviewPage   onNavigate={handleNavigate} />}
-        {activePage === "calculator"  && <CalculatorPage />}
-        {activePage === "graphs"      && <GraphsPage />}
+        {activePage === "calculator"  && (
+          <CalculatorPage
+            sharedP={parallelFraction}
+            onSharedPChange={setParallelFraction}
+          />
+        )}
+        {activePage === "graphs"      && (
+          <GraphsPage
+            parallelFraction={parallelFraction}
+            onParallelFractionChange={setParallelFraction}
+          />
+        )}
         {activePage === "comparison"  && <ComparisonPage />}
         {activePage === "about"       && <AboutPage />}
       </main>
