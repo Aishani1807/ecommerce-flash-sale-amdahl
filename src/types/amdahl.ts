@@ -34,3 +34,32 @@ export interface ScenarioConfig {
   parallelFraction: number;
   cores: number[];
 }
+
+// ── Phase 2 additions ────────────────────────────────────────────────────────
+
+/**
+ * One numbered step in the Amdahl's Law derivation.
+ * label  — short heading, e.g. "Step 1"
+ * expr   — the symbolic / substituted expression
+ * result — the numeric result as a formatted string
+ */
+export interface CalculationStep {
+  step: number;
+  label: string;
+  expr: string;
+  result: string;
+}
+
+/**
+ * One row in the full results table.
+ * All numeric fields store full floating-point values;
+ * rounding is applied only in the UI.
+ */
+export interface TableRow {
+  cores: number;
+  parallelTime: number;   // P / N
+  serialTime: number;     // 1 - P  (constant)
+  totalTime: number;      // (1-P) + P/N
+  speedup: number;        // 1 / totalTime
+  efficiency: number;     // speedup / N  (as a fraction, not percent)
+}
