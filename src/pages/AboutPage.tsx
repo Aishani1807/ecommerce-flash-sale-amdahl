@@ -1,104 +1,109 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // pages/AboutPage.tsx
-// Project information, authors, and tech stack summary.
+// Project information, objectives, and technology stack.
 // ─────────────────────────────────────────────────────────────────────────────
 
-const TECH_STACK = [
-  { name: "React 19",     desc: "UI component library",          color: "text-cyan-400"   },
-  { name: "TypeScript",   desc: "Type-safe JavaScript",          color: "text-blue-400"   },
-  { name: "Vite",         desc: "Lightning-fast build tool",     color: "text-yellow-400" },
-  { name: "Tailwind CSS", desc: "Utility-first CSS framework",   color: "text-teal-400"   },
-  { name: "Recharts",     desc: "Composable charting library",   color: "text-purple-400" },
-  { name: "Vitest",       desc: "Unit testing framework",        color: "text-green-400"  },
+const OBJECTIVES = [
+  "Demonstrate Amdahl's Law through a practical, interactive application",
+  "Model a realistic e-commerce order-processing system under peak load",
+  "Show how parallel fraction and core count affect theoretical speedup",
+  "Illustrate diminishing returns in parallel computing with concrete numbers",
+  "Present all calculations in a form verifiable by hand or calculator",
 ];
 
-const PROJECT_OBJECTIVES = [
-  "Demonstrate Amdahl's Law through an interactive, visual application",
-  "Model a realistic e-commerce order-processing system during peak load",
-  "Show how parallel fraction and core count affect theoretical speedup",
-  "Illustrate the concept of diminishing returns in parallel computing",
-  "Present clear calculations verifiable by hand or calculator",
+const TECH_STACK = [
+  { name: "React 19",      desc: "UI component library" },
+  { name: "TypeScript",    desc: "Type-safe JavaScript" },
+  { name: "Vite",          desc: "Build tool and dev server" },
+  { name: "Tailwind CSS",  desc: "Utility-first CSS framework" },
+  { name: "Recharts",      desc: "Charting library (Phase 2)" },
+  { name: "Vitest",        desc: "Unit testing framework" },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="page-container">
 
-      {/* ── Header ──────────────────────────────────────────────────── */}
-      <header className="mb-10 animate-fade-in-up">
-        <span className="badge bg-green-500/20 text-green-300 mb-3">About</span>
-        <h1 className="text-3xl font-extrabold text-white mb-2">Project Overview</h1>
-        <p className="text-slate-400">
-          Computer Organisation &amp; Architecture (COA) — Academic project
+      {/* Header */}
+      <section style={{ marginBottom: "1.75rem" }}>
+        <h1 style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--text)", marginBottom: "0.25rem" }}>
+          About the Project
+        </h1>
+        <p style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}>
+          Computer Organization and Architecture — Academic project
         </p>
-      </header>
+      </section>
 
-      {/* ── Project Card ────────────────────────────────────────────── */}
-      <div className="card p-8 mb-8">
-        <h2 className="text-xl font-bold text-white mb-1">
-          E-Commerce Flash Sale: Performance Analysis Using Amdahl&apos;s Law
-        </h2>
-        <p className="text-slate-400 text-sm mb-6">
-          An interactive web application that applies computer architecture theory to a
-          real-world e-commerce scenario.
+      {/* Project summary */}
+      <div className="panel" style={{ marginBottom: "1.25rem" }}>
+        <h2 className="section-heading">Project Summary</h2>
+        <p style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.75, marginBottom: "1rem" }}>
+          This project applies Amdahl's Law to an e-commerce order-processing workload to
+          determine how much performance can be gained by adding CPU cores during a flash
+          sale event. The workload is split into an 85% parallelisable fraction and a 15%
+          serial fraction. We compute the theoretical speedup at 4, 16, and 64 cores, and
+          establish that the maximum achievable speedup — regardless of core count — is bounded
+          at approximately 6.67×.
         </p>
 
-        <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3">
-          Project Objectives
-        </h3>
-        <ul className="space-y-2">
-          {PROJECT_OBJECTIVES.map((obj) => (
-            <li key={obj} className="flex items-start gap-2 text-sm text-slate-300">
-              <span className="text-blue-400 mt-0.5 flex-shrink-0">✓</span>
-              {obj}
-            </li>
-          ))}
+        <h3 className="section-heading" style={{ marginTop: "1.25rem" }}>Objectives</h3>
+        <ul style={{ fontSize: "0.875rem", color: "var(--text-muted)", lineHeight: 1.9, paddingLeft: "1.25rem" }}>
+          {OBJECTIVES.map((obj) => <li key={obj}>{obj}</li>)}
         </ul>
       </div>
 
-      {/* ── Tech Stack ──────────────────────────────────────────────── */}
-      <div className="card p-8 mb-8">
-        <h2 className="text-lg font-bold text-white mb-6">Technology Stack</h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          {TECH_STACK.map((tech) => (
-            <div
-              key={tech.name}
-              className="flex items-center gap-3 bg-slate-900/50 rounded-lg
-                         border border-slate-700 px-4 py-3"
-            >
-              <div className={`text-sm font-bold font-mono ${tech.color} min-w-[8rem]`}>
-                {tech.name}
-              </div>
-              <div className="text-xs text-slate-400">{tech.desc}</div>
-            </div>
-          ))}
-        </div>
+      {/* Scenario parameters */}
+      <div className="panel" style={{ marginBottom: "1.25rem" }}>
+        <h2 className="section-heading">Scenario Parameters</h2>
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Parameter</th>
+              <th>Symbol</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { label: "Parallel fraction",         sym: "P",     val: "0.85  (85%)" },
+              { label: "Serial fraction",            sym: "1 − P", val: "0.15  (15%)" },
+              { label: "Core configurations tested", sym: "N",     val: "4, 16, 64" },
+              { label: "Speedup at 4 cores",         sym: "S(4)",  val: "≈ 2.7586×" },
+              { label: "Speedup at 16 cores",        sym: "S(16)", val: "≈ 4.9231×" },
+              { label: "Speedup at 64 cores",        sym: "S(64)", val: "≈ 6.1244×" },
+              { label: "Maximum theoretical speedup",sym: "1/S",   val: "≈ 6.6667×" },
+            ].map((row) => (
+              <tr key={row.label}>
+                <td style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}>{row.label}</td>
+                <td className="mono-cell">{row.sym}</td>
+                <td className="mono-cell" style={{ color: "var(--accent)" }}>{row.val}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-      {/* ── Scenario Parameters ─────────────────────────────────────── */}
-      <div className="card p-8">
-        <h2 className="text-lg font-bold text-white mb-4">Scenario Parameters</h2>
-        <div className="font-mono text-sm space-y-2">
-          <ParamRow label="Parallel fraction (P)" value="0.85  (85 %)" color="text-green-400" />
-          <ParamRow label="Serial fraction (S)"   value="0.15  (15 %)" color="text-orange-400" />
-          <ParamRow label="Core configurations"   value="4, 16, 64"    color="text-blue-400"  />
-          <ParamRow label="Expected speedup @ 4"  value="≈ 2.7586×"    color="text-slate-300" />
-          <ParamRow label="Expected speedup @ 16" value="≈ 4.9231×"    color="text-slate-300" />
-          <ParamRow label="Expected speedup @ 64" value="≈ 6.1244×"    color="text-slate-300" />
-          <ParamRow label="Max theoretical"       value="≈ 6.6667×"    color="text-orange-400" />
-        </div>
+      {/* Technology stack */}
+      <div className="panel">
+        <h2 className="section-heading">Technology Stack</h2>
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Library / Tool</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            {TECH_STACK.map((t) => (
+              <tr key={t.name}>
+                <td className="mono-cell">{t.name}</td>
+                <td style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}>{t.desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
-    </div>
-  );
-}
-
-// ── Helper ───────────────────────────────────────────────────────────────────
-function ParamRow({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <div className="flex justify-between items-center border-b border-slate-700/40 pb-1.5">
-      <span className="text-slate-400">{label}</span>
-      <span className={`font-semibold ${color}`}>{value}</span>
     </div>
   );
 }

@@ -1,62 +1,107 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // components/Navbar.tsx
-// Top navigation bar for the COA project.
+// Top navigation bar — compact, light-themed, academic style.
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface NavbarProps {
-  /** Currently active page id */
   activePage: string;
   onNavigate: (page: string) => void;
 }
 
 const NAV_LINKS = [
-  { id: "home",    label: "Home" },
-  { id: "theory",  label: "Theory" },
-  { id: "analysis", label: "Analysis" },
-  { id: "about",   label: "About" },
+  { id: "overview",    label: "Overview" },
+  { id: "calculator",  label: "Speedup Calculator" },
+  { id: "graphs",      label: "Performance Graphs" },
+  { id: "comparison",  label: "Server Comparison" },
+  { id: "about",       label: "About the Project" },
 ];
 
 export default function Navbar({ activePage, onNavigate }: NavbarProps) {
   return (
-    <nav className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-700/60 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo / Brand */}
-          <button
-            id="nav-logo"
-            onClick={() => onNavigate("home")}
-            className="flex items-center gap-2.5 group"
+    <nav
+      style={{
+        background: "#ffffff",
+        borderBottom: "1px solid #dde1e7",
+        position: "sticky",
+        top: 0,
+        zIndex: 50,
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: "0 auto",
+          padding: "0 1.25rem",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: "3.25rem",
+          gap: "1rem",
+        }}
+      >
+        {/* Brand */}
+        <button
+          id="nav-logo"
+          onClick={() => onNavigate("overview")}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "JetBrains Mono, monospace",
+              fontSize: "0.75rem",
+              fontWeight: 700,
+              color: "#2563eb",
+              background: "#eff6ff",
+              border: "1px solid #bfdbfe",
+              borderRadius: 4,
+              padding: "0.15rem 0.45rem",
+              letterSpacing: "0.04em",
+            }}
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700
-                            flex items-center justify-center text-white font-bold text-sm
-                            group-hover:scale-110 transition-transform duration-200">
-              COA
-            </div>
-            <span className="hidden sm:block font-semibold text-slate-200 text-sm
-                             group-hover:text-white transition-colors">
-              Flash Sale Analysis
-            </span>
-          </button>
+            COA
+          </span>
+          <span
+            style={{
+              fontSize: "0.825rem",
+              fontWeight: 600,
+              color: "#1e2330",
+              whiteSpace: "nowrap",
+            }}
+            className="hidden sm:inline"
+          >
+            Flash Sale Analysis
+          </span>
+        </button>
 
-          {/* Nav links */}
-          <div className="flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
-              <button
-                key={link.id}
-                id={`nav-${link.id}`}
-                onClick={() => onNavigate(link.id)}
-                className={`
-                  px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
-                  ${activePage === link.id
-                    ? "bg-blue-600 text-white shadow-md shadow-blue-500/30"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
-                  }
-                `}
-              >
-                {link.label}
-              </button>
-            ))}
-          </div>
+        {/* Nav links */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.15rem",
+            overflowX: "auto",
+            flexShrink: 1,
+          }}
+        >
+          {NAV_LINKS.map((link) => (
+            <button
+              key={link.id}
+              id={`nav-${link.id}`}
+              onClick={() => onNavigate(link.id)}
+              className={`nav-link${activePage === link.id ? " nav-link--active" : ""}`}
+              style={{ whiteSpace: "nowrap" }}
+            >
+              {link.label}
+            </button>
+          ))}
         </div>
       </div>
     </nav>
