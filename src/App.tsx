@@ -47,7 +47,7 @@ export default function App() {
             onParallelFractionChange={setParallelFraction}
           />
         )}
-        {activePage === "comparison"  && <ComparisonPage />}
+        {activePage === "comparison"  && <ComparisonPage sharedP={parallelFraction} />}
         {activePage === "about"       && <AboutPage />}
       </main>
 
