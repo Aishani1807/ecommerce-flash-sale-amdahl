@@ -48,7 +48,10 @@ export default function CalculatorPage({ sharedP, onSharedPChange }: CalculatorP
   // Use shared P from App if provided, otherwise keep internal state.
   const [internalP, setInternalP] = useState<number>(DEFAULT_P);
   const P = sharedP !== undefined ? sharedP : internalP;
-  const [N, setN] = useState<number>(DEFAULT_N);
+  const [rawN, setRawN] = useState<string>(String(DEFAULT_N));
+  const parsedN = parseInt(rawN, 10);
+  const isInvalidN = rawN.trim() !== "" && (!Number.isFinite(parsedN) || parsedN < 1 || parsedN > 4096);
+  const N = (!isInvalidN && Number.isFinite(parsedN) && parsedN >= 1) ? parsedN : DEFAULT_N;
 
   // Derived values — computed from the calculation module, never hardcoded
   const serialFraction  = 1 - P;
@@ -68,13 +71,12 @@ export default function CalculatorPage({ sharedP, onSharedPChange }: CalculatorP
   function handleReset() {
     setInternalP(DEFAULT_P);
     onSharedPChange?.(DEFAULT_P);
-    setN(DEFAULT_N);
+    setRawN(String(DEFAULT_N));
   }
 
   // Validate a typed core count
   function handleCoreInput(e: React.ChangeEvent<HTMLInputElement>) {
-    const val = parseInt(e.target.value, 10);
-    if (Number.isFinite(val) && val > 0) setN(val);
+    setRawN(e.target.value);
   }
 
   return (
@@ -158,14 +160,14 @@ export default function CalculatorPage({ sharedP, onSharedPChange }: CalculatorP
               type="number"
               min={1}
               max={4096}
-              value={N}
+              value={rawN}
               onChange={handleCoreInput}
               style={{
                 width: "100%",
                 padding: "0.4rem 0.625rem",
                 fontSize: "0.875rem",
                 fontFamily: "JetBrains Mono, monospace",
-                border: "1px solid var(--border-strong)",
+                border: isInvalidN ? "1px solid #dc2626" : "1px solid var(--border-strong)",
                 borderRadius: 4,
                 background: "var(--surface)",
                 color: "var(--text)",
@@ -173,6 +175,11 @@ export default function CalculatorPage({ sharedP, onSharedPChange }: CalculatorP
               }}
               aria-label="Number of cores"
             />
+            {isInvalidN && (
+              <p style={{ fontSize: "0.68rem", color: "#dc2626", marginTop: "0.2rem" }}>
+                Must be an integer between 1 and 4096
+              </p>
+            )}
           </div>
 
           {/* Core preset buttons */}
@@ -185,18 +192,18 @@ export default function CalculatorPage({ sharedP, onSharedPChange }: CalculatorP
                 <button
                   key={c}
                   id={`preset-cores-${c}`}
-                  onClick={() => setN(c)}
-                  aria-pressed={N === c}
+                  onClick={() => setRawN(String(c))}
+                  aria-pressed={N === c && !isInvalidN}
                   style={{
                     fontSize: "0.75rem",
                     fontFamily: "JetBrains Mono, monospace",
                     padding: "0.2rem 0.55rem",
                     borderRadius: 3,
-                    border: N === c ? "1px solid var(--accent)" : "1px solid var(--border)",
-                    background: N === c ? "var(--accent-bg)" : "var(--surface)",
-                    color: N === c ? "var(--accent)" : "var(--text-muted)",
+                    border: (N === c && !isInvalidN) ? "1px solid var(--accent)" : "1px solid var(--border)",
+                    background: (N === c && !isInvalidN) ? "var(--accent-bg)" : "var(--surface)",
+                    color: (N === c && !isInvalidN) ? "var(--accent)" : "var(--text-muted)",
                     cursor: "pointer",
-                    fontWeight: N === c ? 700 : 400,
+                    fontWeight: (N === c && !isInvalidN) ? 700 : 400,
                   }}
                 >
                   {c}

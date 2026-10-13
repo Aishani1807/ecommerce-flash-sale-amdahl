@@ -275,3 +275,41 @@ describe("buildResultsTable", () => {
     parallelRows.forEach((r) => expect(r.speedup).toBeCloseTo(r.cores, 8));
   });
 });
+
+// ── Phase 5 Reference Values Validation ───────────────────────────────────────
+describe("Phase 5 validation reference values (P = 0.85)", () => {
+  const P = 0.85;
+
+  it("reference theoretical speedup values match specification table", () => {
+    expect(calculateSpeedup(P, 1)).toBeCloseTo(1.00, 2);
+    expect(calculateSpeedup(P, 4)).toBeCloseTo(2.76, 2);
+    expect(calculateSpeedup(P, 16)).toBeCloseTo(4.92, 2);
+    expect(calculateSpeedup(P, 64)).toBeCloseTo(6.12, 2);
+    expect(calculateMaxSpeedup(P)).toBeCloseTo(6.67, 2);
+  });
+
+  it("parallel fraction and serial fraction add up to 100%", () => {
+    const serialFraction = 1 - P;
+    expect(P + serialFraction).toBeCloseTo(1.0, 10);
+  });
+
+  it("efficiency is calculated as speedup divided by the number of cores", () => {
+    [1, 4, 16, 32, 64, 128].forEach((cores) => {
+      const speedup = calculateSpeedup(P, cores);
+      const efficiency = speedup / cores;
+      expect(efficiency).toBeCloseTo(speedup / cores, 10);
+      expect(efficiency).toBeGreaterThan(0);
+      expect(efficiency).toBeLessThanOrEqual(1);
+    });
+  });
+
+  it("relative execution time uses single-core baseline (1.0 = 100%)", () => {
+    expect(calculateRelativeTime(P, 1)).toBeCloseTo(1.0, 10);
+    [1, 4, 16, 32, 64, 128].forEach((cores) => {
+      const s = calculateSpeedup(P, cores);
+      const t = calculateRelativeTime(P, cores);
+      expect(t).toBeCloseTo(1 / s, 10);
+    });
+  });
+});
+

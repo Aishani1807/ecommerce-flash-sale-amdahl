@@ -29,10 +29,11 @@ import type { CostAssumptions, ComparisonRow, CostResult } from "../types/compar
 interface ComparisonPageProps {
   /** Shared parallel fraction from App-level state */
   sharedP?: number;
+  /** Callback to update shared parallel fraction across App */
+  onSharedPChange?: (p: number) => void;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-
 
 function parseCostField(raw: string): number | null {
   const v = parseFloat(raw);
@@ -41,11 +42,19 @@ function parseCostField(raw: string): number | null {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function ComparisonPage({ sharedP }: ComparisonPageProps = {}) {
+export default function ComparisonPage({ sharedP, onSharedPChange }: ComparisonPageProps = {}) {
   // ── Scenario selection ───────────────────────────────────────────────────
-  // "custom" uses the shared P from the calculator; the three named scenarios
-  // use their fixed fractions. Default: first named scenario (P=0.85).
+  // Default scenario is p85. If sharedP matches one of the named scenarios, sync with it.
+  const matchingScenario = sharedP !== undefined
+    ? WORKLOAD_SCENARIOS.find((s) => Math.abs(s.parallelFraction - sharedP) < 0.0001)
+    : undefined;
+
   const [scenarioId, setScenarioId] = useState<string>("p85");
+
+  // Determine active scenario ID: if sharedP is provided and does not match a named scenario, use "custom"
+  const activeScenarioId = scenarioId === "custom"
+    ? "custom"
+    : (matchingScenario ? matchingScenario.id : scenarioId);
 
   // Raw string states for cost inputs (so the user can clear fields)
   const [costRaw, setCostRaw] = useState({
@@ -57,10 +66,18 @@ export default function ComparisonPage({ sharedP }: ComparisonPageProps = {}) {
   const [showCostPanel, setShowCostPanel] = useState(false);
 
   // ── Derive active parallel fraction ───────────────────────────────────────
-  const activeScenario = WORKLOAD_SCENARIOS.find((s) => s.id === scenarioId);
-  const P: number = scenarioId === "custom" && sharedP !== undefined
+  const activeScenario = WORKLOAD_SCENARIOS.find((s) => s.id === activeScenarioId);
+  const P: number = activeScenarioId === "custom" && sharedP !== undefined
     ? sharedP
-    : activeScenario?.parallelFraction ?? 0.85;
+    : (activeScenario?.parallelFraction ?? (sharedP ?? 0.85));
+
+  function handleScenarioSelect(id: string) {
+    setScenarioId(id);
+    const scenario = WORKLOAD_SCENARIOS.find((s) => s.id === id);
+    if (scenario && onSharedPChange) {
+      onSharedPChange(scenario.parallelFraction);
+    }
+  }
 
   const maxSpeedup = calculateMaxSpeedup(P);
   const isUnbounded = !isFinite(maxSpeedup);
@@ -112,18 +129,18 @@ export default function ComparisonPage({ sharedP }: ComparisonPageProps = {}) {
             <button
               key={s.id}
               id={`scenario-btn-${s.id}`}
-              onClick={() => setScenarioId(s.id)}
-              aria-pressed={scenarioId === s.id}
+              onClick={() => handleScenarioSelect(s.id)}
+              aria-pressed={activeScenarioId === s.id}
               style={{
                 fontSize: "0.82rem",
                 padding: "0.3rem 0.85rem",
                 borderRadius: 4,
-                border: scenarioId === s.id
+                border: activeScenarioId === s.id
                   ? "1px solid var(--accent)"
                   : "1px solid var(--border-strong)",
-                background: scenarioId === s.id ? "var(--accent-bg)" : "var(--surface)",
-                color: scenarioId === s.id ? "var(--accent)" : "var(--text-muted)",
-                fontWeight: scenarioId === s.id ? 600 : 400,
+                background: activeScenarioId === s.id ? "var(--accent-bg)" : "var(--surface)",
+                color: activeScenarioId === s.id ? "var(--accent)" : "var(--text-muted)",
+                fontWeight: activeScenarioId === s.id ? 600 : 400,
                 cursor: "pointer",
               }}
             >
@@ -135,21 +152,21 @@ export default function ComparisonPage({ sharedP }: ComparisonPageProps = {}) {
             <button
               id="scenario-btn-custom"
               onClick={() => setScenarioId("custom")}
-              aria-pressed={scenarioId === "custom"}
+              aria-pressed={activeScenarioId === "custom"}
               style={{
                 fontSize: "0.82rem",
                 padding: "0.3rem 0.85rem",
                 borderRadius: 4,
-                border: scenarioId === "custom"
+                border: activeScenarioId === "custom"
                   ? "1px solid var(--accent)"
                   : "1px solid var(--border-strong)",
-                background: scenarioId === "custom" ? "var(--accent-bg)" : "var(--surface)",
-                color: scenarioId === "custom" ? "var(--accent)" : "var(--text-muted)",
-                fontWeight: scenarioId === "custom" ? 600 : 400,
+                background: activeScenarioId === "custom" ? "var(--accent-bg)" : "var(--surface)",
+                color: activeScenarioId === "custom" ? "var(--accent)" : "var(--text-muted)",
+                fontWeight: activeScenarioId === "custom" ? 600 : 400,
                 cursor: "pointer",
               }}
             >
-              Calculator P ({(sharedP * 100).toFixed(0)}%)
+              {matchingScenario ? "Custom" : `Custom P (${(sharedP * 100).toFixed(0)}%)`}
             </button>
           )}
         </div>

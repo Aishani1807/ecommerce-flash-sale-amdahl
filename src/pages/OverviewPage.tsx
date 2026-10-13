@@ -27,7 +27,7 @@ export default function OverviewPage({ onNavigate }: OverviewPageProps) {
           This project examines how serial and parallel execution fractions affect the
           performance of an e-commerce order-processing workload during a high-traffic
           flash sale event. Using Amdahl's Law, we compute the theoretical maximum speedup
-          achievable as the number of CPU cores scales from 4 to 64, and determine the
+          achievable as the number of CPU cores scales from 4 to 128, and determine the
           fundamental ceiling imposed by the serial fraction of the workload.
         </p>
       </section>
@@ -55,8 +55,8 @@ export default function OverviewPage({ onNavigate }: OverviewPageProps) {
           <InfoCard
             id="panel-cores"
             label="Core Configurations"
-            value="4 · 16 · 64"
-            sub="three scenarios evaluated"
+            value="4 · 16 · 32 · 64 · 128"
+            sub="five configurations compared"
           />
           <InfoCard
             id="panel-max-speedup"
@@ -144,7 +144,7 @@ export default function OverviewPage({ onNavigate }: OverviewPageProps) {
               <tr>
                 <td className="mono-cell">N</td>
                 <td style={{ fontSize: "0.875rem", color: "var(--text-muted)" }}>Number of CPU cores</td>
-                <td className="mono-cell">4, 16, 64</td>
+                <td className="mono-cell">4, 16, 32, 64, 128</td>
               </tr>
             </tbody>
           </table>
@@ -170,7 +170,7 @@ export default function OverviewPage({ onNavigate }: OverviewPageProps) {
               Questions this project answers
             </p>
             <ul style={{ fontSize: "0.825rem", color: "var(--text-muted)", lineHeight: 1.8, paddingLeft: "1.1rem" }}>
-              <li>What is the speedup at 4, 16, and 64 cores for this workload?</li>
+              <li>What is the speedup at 4, 16, 32, 64, and 128 cores for this workload?</li>
               <li>What is the theoretical maximum speedup, and why can it not be exceeded?</li>
               <li>How does efficiency (speedup per core) change as core count scales?</li>
               <li>At what point do additional cores yield negligible improvement?</li>
@@ -194,11 +194,13 @@ export default function OverviewPage({ onNavigate }: OverviewPageProps) {
             </thead>
             <tbody>
               {[
-                { n: 1,  speedup: "1.0000×",  eff: "100.0%", gain: "baseline" },
-                { n: 4,  speedup: "2.7586×",  eff: "68.97%", gain: "+1.76×" },
-                { n: 16, speedup: "4.9231×",  eff: "30.77%", gain: "+3.92×" },
-                { n: 64, speedup: "6.1244×",  eff: "9.57%",  gain: "+5.12×" },
-                { n: "∞", speedup: "6.6667×", eff: "→ 0%",   gain: "+5.67× (limit)" },
+                { n: 1,   speedup: "1.0000×",  eff: "100.0%", gain: "baseline" },
+                { n: 4,   speedup: "2.7586×",  eff: "68.97%", gain: "+1.76×" },
+                { n: 16,  speedup: "4.9231×",  eff: "30.77%", gain: "+3.92×" },
+                { n: 32,  speedup: "5.6637×",  eff: "17.70%", gain: "+4.66×" },
+                { n: 64,  speedup: "6.1244×",  eff: "9.57%",  gain: "+5.12×" },
+                { n: 128, speedup: "6.3840×",  eff: "4.99%",  gain: "+5.38×" },
+                { n: "∞", speedup: "6.6667×",  eff: "→ 0%",   gain: "+5.67× (limit)" },
               ].map((row) => (
                 <tr key={String(row.n)}>
                   <td className="mono-cell">{row.n}</td>
@@ -219,6 +221,7 @@ export default function OverviewPage({ onNavigate }: OverviewPageProps) {
       <section style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
         <NavButton id="cta-calculator" label="Open Speedup Calculator →" page="calculator" onNavigate={onNavigate} primary />
         <NavButton id="cta-graphs"     label="View Performance Graphs"   page="graphs"     onNavigate={onNavigate} />
+        <NavButton id="cta-comparison" label="Server Comparison"          page="comparison"  onNavigate={onNavigate} />
       </section>
 
     </div>
